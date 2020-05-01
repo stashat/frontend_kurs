@@ -1,0 +1,17 @@
+{
+  "name": "purereact",
+  "version": "1.0.0",
+  "description": "opiss",
+  "main": "App.js",
+  "scripts": {
+    "dev": "parcel ./index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "stasha",
+  "license": "ISC",
+  "dependencies": {
+    "parcel-bundler": "^1.12.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
