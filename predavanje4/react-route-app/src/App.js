@@ -1,40 +1,43 @@
 import React from "react";
-import "./App.css";
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
 import { Home } from "./components/Home";
-import { Users } from "./components/Users";
-
+import { Dashboard } from "./components/Dashboard";
+import { PrivateRoute } from "./PrivateRoute";
+import { auth } from "./auth/AuthService";
+import Login from "./components/Login";
 class App extends React.Component {
   state = {
-    users: [],
+    isAuth: auth.getAuthStatus(),
   };
-  componentDidMount() {
-    fetch("https://api.github.com/users").then((res) =>
-      res.json().then((res) => {
-        console.log(res);
-        let users = res.slice(0, 5);
-        this.setState({ users });
-      })
-    );
-  }
-  generatedLinks = () => {
-    let userLinks = this.state.users.map((user) => {
-      return <Link to={`/users/${user.login}`}>{user.login}</Link>;
-    });
-    return userLinks;
+  toggleAuth = (isAuth) => {
+    if (isAuth) {
+      this.setState({ isAuth })
+    }
+    else {
+      auth.logout()
+    }
   };
   render() {
     return (
       <div className="App">
         <BrowserRouter>
-          <div className="navigation">{this.generatedLinks()}</div>
-          <Link to="/users">Users</Link>
-          <Route path="/users/:id" component={Users}></Route>
-          {/* <Switch>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)" }}
+          >
+            <Link to="/">Home</Link>
+            <Link to="/dashboard">Dashboard</Link>
+            {this.state.isAuth ? <button onClick={() => this.toggleAuth(false)}>Logout</button> : <Link to="/login">Login</Link>}
+
+          </div>
+          <Switch>
             <Route exact path="/" component={Home}></Route>
-            <Route path="/(korisnici|users|user)" component={Users}></Route>
-            <Route path="*" render={() => <h1>404 Not Found</h1>}></Route>
-          </Switch> */}
+            <Route path="/login" render={() => <Login updateAuthStatus={this.toggleAuth}></Login>}></Route>
+            <PrivateRoute
+              component={Dashboard}
+              path="/dashboard"
+            ></PrivateRoute>
+            <Route path="/dashboard" component={Dashboard}></Route>
+          </Switch>
         </BrowserRouter>
       </div>
     );
